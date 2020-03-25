@@ -28,7 +28,7 @@ public class HourServer {
         return map;
     }
 
-    HourServer(int port) throws IOException, IOException {
+    public HourServer(int port) throws IOException, IOException {
         serverSocket = new ServerSocket(port);
         requestManager = RequestManager.getInstance();
 
@@ -39,12 +39,9 @@ public class HourServer {
         while (true) {
             socket = serverSocket.accept();
             try {
-
                 bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 printStream = new PrintStream(socket.getOutputStream());
                 requestManager.setPrintStream(printStream);
-
-                idClient += 1;
                 requestLoop();
             } catch (IOException e) {
             }
