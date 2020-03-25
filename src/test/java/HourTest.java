@@ -1,6 +1,6 @@
 import static org.junit.Assert.*;
 
-import com.github.AbouOpenSource.Hour;
+import com.github.AbouOpenSource.Utils.Hour;
 import org.junit.Test;
 
 public class HourTest {

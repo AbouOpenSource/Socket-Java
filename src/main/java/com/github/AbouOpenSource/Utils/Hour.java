@@ -1,5 +1,4 @@
-package com.github.AbouOpenSource;
-import java.io.*;
+package com.github.AbouOpenSource.Utils;
 
 public class Hour {
 
@@ -15,8 +14,8 @@ public class Hour {
 
 
     public String toString() {
-        String msg = h+":"+m+":"+s;
-        return msg;
+        return h+":"+m+":"+s;
+
     }
 
     public int getH() {
