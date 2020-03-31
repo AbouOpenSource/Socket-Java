@@ -11,6 +11,4 @@ public enum TypeRequest {
     STORE_TIME,
     COMPUTE_MEAN,
     GAP_IN_SECONDS
-
-
 }

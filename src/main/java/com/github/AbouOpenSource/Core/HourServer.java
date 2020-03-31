@@ -36,6 +36,7 @@ public class HourServer {
     }
 
     public void run() throws IOException {
+        System.out.println("the server is launched");
         while (true) {
             socket = serverSocket.accept();
             try {
@@ -44,6 +45,7 @@ public class HourServer {
                 requestManager.setPrintStream(printStream);
                 requestLoop();
             } catch (IOException e) {
+                System.out.println();
             }
         }
 
@@ -55,6 +57,7 @@ public class HourServer {
         try {
             while (true) {
                 req = bufferedReader.readLine();
+                System.out.println(req);
                 Request request = new Request(req);
                 requestManager.answersToRequest(request);
             }

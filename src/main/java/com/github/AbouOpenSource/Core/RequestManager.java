@@ -11,11 +11,11 @@ import java.util.Vector;
 public class RequestManager {
     private static final RequestManager instance = new RequestManager();
     //first one is the
-    private Map<Integer, Vector<Hour>> requests;
+    private HashMap<Integer, Vector<Hour>> datas;
     PrintStream printStream;
 
     public RequestManager() {
-            requests = new HashMap();
+            datas = new HashMap();
     }
 
     public static RequestManager getInstance(){
@@ -23,52 +23,76 @@ public class RequestManager {
     };
 
     public boolean idExists(int id){
-        return requests.containsKey(id);
+        return datas.containsKey(id);
     }
 
     public void addRequest(Request request){
         if (idExists(request.getId())){
-            requests.get(request.getId()).add(request.getHour());
+            datas.get(request.getId()).add(request.getHour());
         }else {
             Vector<Hour> vector = new Vector<Hour>();
             vector.add(request.getHour());
-            requests.put(request.getId(), vector);
+            datas.put(request.getId(), vector);
         }
 
+    }
+
+    public void addNewId(Request request){
+        datas.put(request.getId(),new Vector<>());
     }
 
     public void answersToRequest(Request request){
         switch (request.getTypeRequest()){
             case GET_ID:
+                System.out.println("Send DATA"+request.getId());
                 send(String.valueOf(request.getId()));
+                addNewId(request);
                 break;
 
             case STORE_TIME:
                 addRequest(request);
                 send("OK");
-                System.out.println("The answer is sent !!!");
                 break;
 
             case COMPUTE_MEAN:
-                Hour hour = computeMean(request.getId());
-                send(hour.toString());
+                send(computeMean(request.getId()).toString());
                 break;
 
             case GAP_IN_SECONDS:
-
+                send("OK");
+                send(String.valueOf(gapValidate(request)));
                 break;
         }
     };
 
     public void send(String message){
-
+            printStream.println(message);
     }
 
     public Hour computeMean(int id){
+        Vector<Hour> tmp = datas.get(id);
+        int h=0,m=0,s=0;
+        for (int i =0; i < tmp.size();i++){
 
+               h+=tmp.elementAt(i).getH();
+               m+=tmp.elementAt(i).getM();
+               s+=tmp.elementAt(i).getS();
+        }
 
-        return new Hour();
+        return new Hour(h/tmp.size(),m/tmp.size(),s/tmp.size());
     }
+        public boolean gapValidate(Request request){
+
+            Vector<Hour> tmp = datas.get(request.getId());
+            int h=0,m=0,s=0;
+            for (int i =0; i < tmp.size();i++){
+                   if (tmp.elementAt(i).closeTo(request.getHour(),request.getGap()))
+                       return true;
+
+            }
+            return false;
+        }
+
 
     public void setPrintStream(PrintStream printStream) {
         this.printStream = printStream;

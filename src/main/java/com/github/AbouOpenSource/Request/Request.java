@@ -11,19 +11,22 @@ public class Request {
     int id_client;
     String header[];
     Hour hour;
+    int gap=0;
 
     public Request(String request) throws ExceptionRequest {
         boolean right=false;
         char characterFirst= request.charAt(0);
         boolean isDigit = Character.isDigit(characterFirst);
         if (isDigit){
-
-            switch (characterFirst){
+            int first=Character.getNumericValue(characterFirst);
+            switch (first){
                     case 0:
+
                         right=Pattern.matches("\\d",request);
                         if(right){
                             typeRequest = TypeRequest.GET_ID;
                             id_client = HourServer.getNextOneId();
+                            System.out.println(id_client);
                         }else {
                             throw new ExceptionRequest(request,"Syntax ERROR");
                         }
@@ -31,15 +34,19 @@ public class Request {
 
                     case 1:
                        //1 client_id h m s
+
                         right=Pattern.matches("\\d+\\s\\d+\\s\\d+\\s\\d+\\s\\d+",request);
                         if(right){
                             String[] lst = request.split(" ");
-                            if(!checkIdExists(id_client)){
-                                throw new ExceptionRequest(request,"ERROR ID");
-                            }
-                            if(checkParams(Integer.parseInt(lst[2]),Integer.parseInt(lst[3]), Integer.parseInt(lst[4]))){
-                                throw new ExceptionRequest(request,"ERROR PARAM");
 
+                            id_client =  Integer.parseInt(lst[1]);
+                            System.out.println(checkIdExists(id_client));
+
+                            if(!checkIdExists(id_client)){
+                                throw new ExceptionRequest(request,"ERROR_ID");
+                            }
+                            if(!checkParams(Integer.parseInt(lst[2]),Integer.parseInt(lst[3]), Integer.parseInt(lst[4]))){
+                                throw new ExceptionRequest(request,"ERROR PARAM");
                             }
 
                             typeRequest = TypeRequest.STORE_TIME;
@@ -48,7 +55,7 @@ public class Request {
                                     Integer.parseInt(lst[4]));
 
                         }else {
-                            throw new ExceptionRequest(request,"SYNTAX ERROR");
+                            throw new ExceptionRequest(request,"SYNTAX_ERROR");
                         }
 
                         break;
@@ -58,13 +65,13 @@ public class Request {
                          if(right){
                              String[] lst = request.split(" ");
                              typeRequest = TypeRequest.COMPUTE_MEAN;
-                             id_client = Integer.parseInt(lst[2]);
+                             id_client = Integer.parseInt(lst[1]);
                              if(!checkIdExists(id_client)){
-                                 throw new ExceptionRequest(request,"ERROR ID");
+                                 throw new ExceptionRequest(request,"ERROR_ID");
                              }
 
                          }else {
-                             throw new ExceptionRequest(request,"Syntax ERROR");
+                             throw new ExceptionRequest(request,"SYNTAX_ERROR");
                          }
                         break;
                     case 3:
@@ -74,10 +81,10 @@ public class Request {
                              String[] lst = request.split(" ");
 
                              if(!checkIdExists(id_client)){
-                                 throw new ExceptionRequest(request,"ERROR ID");
+                                 throw new ExceptionRequest(request,"ERROR_ID");
                              }
-                             if(checkParams(Integer.parseInt(lst[2]),Integer.parseInt(lst[3]), Integer.parseInt(lst[4]))){
-                                 throw new ExceptionRequest(request,"ERROR PARAM");
+                             if(!checkParams(Integer.parseInt(lst[2]),Integer.parseInt(lst[3]), Integer.parseInt(lst[4])) || Integer.parseInt(lst[5])<0){
+                                 throw new ExceptionRequest(request,"ERROR_PARAM");
 
                              }
 
@@ -86,7 +93,7 @@ public class Request {
                              hour = new Hour(Integer.parseInt(lst[2]),
                                      Integer.parseInt(lst[3]),
                                      Integer.parseInt(lst[4]));
-
+                                gap = Integer.parseInt(lst[5]);
 
                         }else {
                             throw new ExceptionRequest(request,"Syntax ERROR");
@@ -102,7 +109,7 @@ public class Request {
 
 
         }else {
-            throw new ExceptionRequest(request);
+            throw new ExceptionRequest(request,"FORMAT NOT GOOD");
         }
 
     }
@@ -130,5 +137,9 @@ public class Request {
 
     public TypeRequest getTypeRequest() {
         return typeRequest;
+    }
+
+    public int getGap() {
+        return gap;
     }
 }
